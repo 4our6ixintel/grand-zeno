@@ -3,28 +3,45 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Matches — DLS25 League</title>
+<title>DLS25 League — Matches</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-body{
-  margin:0;font-family:Inter,Arial;
-  background:linear-gradient(180deg,rgba(5,5,8,0.7),rgba(0,0,0,0.8)),url('assets/bg2.jpg') center/cover fixed;
-  color:#f6fbff;
+:root {
+  --primary: #7ed957;
+  --bg-dark: rgba(5,5,8,0.8);
+  --bg-light: #f6f6f6;
+  --text-dark: #f6fbff;
+  --text-light: #111;
 }
+
+body { margin:0;font-family:'Inter',Arial,sans-serif;background:linear-gradient(180deg,rgba(5,5,8,0.7),rgba(0,0,0,0.8)),url('assets/bg2.jpg') center/cover fixed;color:var(--text-dark);transition:0.3s;}
+body.light { background: var(--bg-light); color: var(--text-light); }
+
 .nav{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:rgba(255,255,255,0.04);backdrop-filter:blur(8px);position:sticky;top:0;z-index:99;border-bottom:1px solid rgba(255,255,255,0.08);}
-.nav-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;}
+.nav-brand{display:flex;align-items:center;gap:10px;color:var(--text-dark);font-weight:700;}
 .nav-brand img{width:40px;height:40px;border-radius:8px;}
 .nav-links{display:flex;gap:16px;flex-wrap:wrap;}
-.nav-links a{color:#c9d1d6;text-decoration:none;font-weight:600;padding:6px 10px;border-radius:8px;}
-.nav-links a:hover{background:rgba(255,255,255,0.06);color:#fff;}
+.nav-links a{color:#c9d1d6;text-decoration:none;font-weight:600;padding:6px 10px;border-radius:8px;transition:0.2s;}
+.nav-links a:hover{background:rgba(255,255,255,0.06);color:var(--text-dark);}
+
 .container{max-width:1200px;margin:30px auto;padding:16px;}
 .match-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
-.match{background:rgba(255,255,255,0.03);padding:12px;border-radius:12px;backdrop-filter:blur(6px);}
+.match{background:rgba(255,255,255,0.03);padding:16px;border-radius:12px;backdrop-filter:blur(6px);transition:0.2s;cursor:pointer;}
+.match:hover{transform:translateY(-4px);box-shadow:0 4px 20px rgba(0,0,0,0.3);}
 .match h3{margin:0 0 6px;}
 .small{font-size:13px;color:#cbd5db;}
 .audio-player{position:fixed;bottom:12px;right:12px;background:rgba(255,255,255,0.07);backdrop-filter:blur(8px);border-radius:14px;padding:8px;}
+
+#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);justify-content:center;align-items:center;z-index:200;transition:0.3s;}
+#modal-content{background:rgba(255,255,255,0.08);padding:24px;border-radius:16px;max-width:400px;text-align:center;animation:fadeIn 0.3s;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+
+button#scrollTop{position:fixed;bottom:24px;right:24px;background:var(--primary);border:none;border-radius:50%;width:44px;height:44px;cursor:pointer;font-size:18px;color:#111;transition:0.2s;}
+button#scrollTop:hover{transform:translateY(-4px);}
 </style>
 </head>
-<body>
+<body class="dark">
+
 <header class="nav">
   <div class="nav-brand"><img src="assets/logo.png"/><span>DLS25 League</span></div>
   <nav class="nav-links">
@@ -37,9 +54,27 @@ body{
 </header>
 
 <div class="container">
-  <h2>Season Schedule — 90 Matches</h2>
+  <h2>Season Fixtures — 90 Matches (2 Legs)</h2>
+  <div style="margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+    <div>
+      <label for="week" style="font-weight:600;">Select Week:</label>
+      <select id="week" onchange="loadWeek()" style="background:rgba(255,255,255,0.08);color:#fff;padding:6px;border-radius:8px;border:none;"></select>
+    </div>
+    <button id="theme-toggle" onclick="toggleTheme()" style="background:rgba(255,255,255,0.08);color:#fff;padding:6px 10px;border:none;border-radius:8px;cursor:pointer;">🌙</button>
+  </div>
   <div id="matches" class="match-list"></div>
 </div>
+
+<div id="modal">
+  <div id="modal-content">
+    <span onclick="closeModal()" style="float:right;cursor:pointer;font-size:22px;">&times;</span>
+    <h2 id="modal-title"></h2>
+    <p id="modal-teams"></p>
+    <p id="modal-time"></p>
+  </div>
+</div>
+
+<button id="scrollTop" onclick="scrollToTop()">⬆</button>
 
 <div class="audio-player">
   <audio controls loop>
@@ -48,38 +83,85 @@ body{
 </div>
 
 <script>
-const teams=["Galaxy FC","Jamie FC","Liverpool FC","AFC Gunners FC","Mcdamasen FC","Man City FC","Man U","Pafoda FC","Ten United FC","Talex FC"];
-function roundRobin(list){
- const n=list.length,rounds=n-1,half=n/2,s=[];
- const teams=[...list];
- for(let r=0;r<rounds;r++){
-  const pairs=[];
-  for(let i=0;i<half;i++)pairs.push([teams[i],teams[n-1-i]]);
-  s.push(pairs);
-  teams.splice(1,0,teams.pop());
- }
- return s;
+const teams = ["Timer FC","Parry FC","Kabengwa FC","Manjama FC","Coven FC","BDH FC","Man City FC","Lomo FC","Carnage FC","Brian FC"];
+const MATCHES_PER_DAY = 2;
+const DAYS_PER_WEEK = 7;
+const WEEKS = 6;
+
+// Generate 2-leg season (home & away)
+function genSeason(teams){
+  const matches = [];
+  for(let i=0;i<teams.length;i++){
+    for(let j=i+1;j<teams.length;j++){
+      matches.push({home:teams[i],away:teams[j]});
+      matches.push({home:teams[j],away:teams[i]});
+    }
+  }
+  matches.splice(90); // ensure exactly 90 matches
+
+  const start=new Date("2025-12-01");
+  const times=["13:00","16:00"];
+  let season=[],dayCount=0;
+  for(let m=0;m<matches.length;m++){
+    const date=new Date(start);
+    date.setDate(start.getDate()+dayCount);
+    season.push({...matches[m],date:date.toISOString().slice(0,10),time:times[m%times.length],day:dayCount+1});
+    if((m+1)%MATCHES_PER_DAY===0) dayCount++;
+  }
+  return season;
 }
-function genSeason(t){
- const s=roundRobin(t),f=[];
- const start=new Date();
- let d=0;
- s.forEach((r,i)=>r.forEach(p=>{
-   const date=new Date(start);date.setDate(date.getDate()+d++);
-   f.push({home:p[0],away:p[1],round:i+1,date:date.toISOString().slice(0,10)});
- }));
- const rev=s.flatMap((r,i)=>r.map(p=>{
-   const date=new Date(start);date.setDate(date.getDate()+d++);
-   return {home:p[1],away:p[0],round:i+1+s.length,date:date.toISOString().slice(0,10)};
- }));
- return f.concat(rev);
-}
+
 const matches=genSeason(teams);
-document.getElementById('matches').innerHTML=matches.map((m,i)=>`
- <div class="match"><h3>Match ${i+1}: ${m.home} vs ${m.away}</h3><div class="small">Round ${m.round} • ${m.date}</div></div>
-`).join('');
+
+// Populate week selector
+const weekSelect=document.getElementById("week");
+for(let w=1;w<=WEEKS;w++){
+  const opt=document.createElement("option");
+  opt.value=w; opt.text="Week "+w;
+  weekSelect.appendChild(opt);
+}
+
+// Load matches per week
+function loadWeek(){
+  const week=parseInt(weekSelect.value);
+  const startIndex=(week-1)*DAYS_PER_WEEK*MATCHES_PER_DAY;
+  const slice=matches.slice(startIndex,startIndex+DAYS_PER_WEEK*MATCHES_PER_DAY);
+  document.getElementById("matches").innerHTML=slice.map((m,i)=>`
+    <div class="match" onclick="openModal('${m.home}','${m.away}','${m.date}','${m.time}')">
+      <h3>Day ${m.day}: ${m.home} vs ${m.away}</h3>
+      <div class="small">📅 ${m.date} • 🕒 ${m.time}</div>
+    </div>
+  `).join("");
+}
+loadWeek();
+
+// Modal
+function openModal(home,away,date,time){
+  document.getElementById("modal-title").innerText=`${home} vs ${away}`;
+  document.getElementById("modal-teams").innerText=`📅 ${date}`;
+  document.getElementById("modal-time").innerText=`🕒 Kickoff: ${time}`;
+  document.getElementById("modal").style.display="flex";
+}
+function closeModal(){document.getElementById("modal").style.display="none";}
+function scrollToTop(){window.scrollTo({top:0,behavior:"smooth"});}
+
+// Theme toggle
+function toggleTheme(){
+  document.body.classList.toggle("light");
+  document.body.classList.toggle("dark");
+  document.getElementById("theme-toggle").innerText = document.body.classList.contains("dark")?"🌙":"☀️";
+}
+
+// Highlight nav
 const path=location.pathname.split('/').pop();
-document.querySelectorAll('.nav-links a').forEach(a=>{if(a.getAttribute('href')===path){a.style.color='#7ed957';a.style.fontWeight='700';}});
+document.querySelectorAll('.nav-links a').forEach(a=>{if(a.getAttribute('href')===path){a.style.color='var(--primary)';a.style.fontWeight='700';}});
+
+// Auto-select current week
+const today=new Date().toISOString().slice(0,10);
+const currentDay=matches.find(m=>m.date>=today)?.day || 1;
+weekSelect.value=Math.ceil(currentDay/DAYS_PER_WEEK);
+loadWeek();
 </script>
+
 </body>
 </html>
