@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Rules — DLS25</title>
+<style>
+body{margin:0;font-family:Inter,Arial;background:linear-gradient(180deg,rgba(1,1,5,0.85),rgba(0,0,0,0.9)),url('assets/bg2.jpg') center/cover fixed;color:#f3f8ff;}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:rgba(255,255,255,0.04);backdrop-filter:blur(8px);position:sticky;top:0;border-bottom:1px solid rgba(255,255,255,0.08);}
+.nav-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;}
+.nav-brand img{width:40px;height:40px;border-radius:8px;}
+.nav-links{display:flex;gap:16px;flex-wrap:wrap;}
+.nav-links a{color:#c9d1d6;text-decoration:none;font-weight:600;padding:6px 10px;border-radius:8px;}
+.nav-links a:hover{background:rgba(255,255,255,0.06);color:#fff;}
+.container{max-width:1000px;margin:28px auto;padding:18px;}
+.card{background:rgba(255,255,255,0.03);padding:16px;border-radius:12px;backdrop-filter:blur(6px);}
+.rule{display:flex;gap:12px;align-items:flex-start;padding:10px;border-radius:10px;background:rgba(0,0,0,0.2);}
+.rule .num{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-weight:700;}
+.small{font-size:13px;color:#cbd5db;}
+.audio-player{position:fixed;bottom:12px;right:12px;background:rgba(255,255,255,0.07);backdrop-filter:blur(8px);border-radius:14px;padding:8px;}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-brand"><img src="assets/logo.png"/><span>DLS25 League</span></div>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="match.html">Matches</a>
+    <a href="tables.html">Tables</a>
+    <a href="blog.html">Blog</a>
+    <a href="rules.html">Rules</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h2>Rules & Discipline</h2>
+    <div class="rule"><div class="num">1</div><div><strong>Match Points:</strong> Win 3, Draw 1, Loss 0</div></div>
+    <div class="rule"><div class="num">2</div><div><strong>Tie-breakers:</strong> Goal difference → Goals scored → Head-to-head</div></div>
+    <div class="rule"><div class="num">3</div><div><strong>Discipline:</strong> Yellow = 1pt, Red = 3pts suspension</div></div>
+    <table style="width:100%;margin-top:14px;border-collapse:collapse;">
+      <thead><tr><th align="left">Rule</th><th align="left">Details</th></tr></thead>
+      <tbody>
+        <tr><td>Substitutions</td><td>Up to 5 allowed (max 3 stoppages)</td></tr>
+        <tr><td>Forfeits</td><td>Failure to show → 3-0 loss</td></tr>
+        <tr><td>Match Duration</td><td>2 × 45 min halves</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="audio-player"><audio controls loop><source src="assets/theme-dls24.mp3" type="audio/mpeg"/></audio></div>
+<script>
+const path=location.pathname.split('/').pop();
+document.querySelectorAll('.nav-links a').forEach(a=>{if(a.getAttribute('href')===path){a.style.color='#7ed957';a.style.fontWeight='700';}});
+</script>
+</body>
+</html>

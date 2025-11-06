@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>League Table — DLS25</title>
+<style>
+body{margin:0;font-family:Inter,Arial;background:linear-gradient(180deg,rgba(6,6,8,0.7),rgba(0,0,0,0.75)),url('assets/bg1.jpg') center/cover fixed;color:#eef2f7;}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:rgba(255,255,255,0.04);backdrop-filter:blur(8px);position:sticky;top:0;border-bottom:1px solid rgba(255,255,255,0.08);}
+.nav-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;}
+.nav-brand img{width:40px;height:40px;border-radius:8px;}
+.nav-links{display:flex;gap:16px;flex-wrap:wrap;}
+.nav-links a{color:#c9d1d6;text-decoration:none;font-weight:600;padding:6px 10px;border-radius:8px;}
+.nav-links a:hover{background:rgba(255,255,255,0.06);color:#fff;}
+.container{max-width:1200px;margin:30px auto;padding:16px;}
+.table-wrap{background:rgba(255,255,255,0.04);backdrop-filter:blur(8px);padding:14px;border-radius:14px;}
+table{width:100%;border-collapse:collapse;}
+thead th{padding:12px;background:rgba(255,255,255,0.03);}
+td{padding:10px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.03);}
+.audio-player{position:fixed;bottom:12px;right:12px;background:rgba(255,255,255,0.07);backdrop-filter:blur(8px);border-radius:14px;padding:8px;}
+@media(max-width:700px){thead{display:none;}tbody tr{display:block;margin-bottom:12px;background:rgba(0,0,0,0.3);border-radius:10px;}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-brand"><img src="assets/logo.png"/><span>DLS25 League</span></div>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="match.html">Matches</a>
+    <a href="tables.html">Tables</a>
+    <a href="blog.html">Blog</a>
+    <a href="rules.html">Rules</a>
+  </nav>
+</header>
+<div class="container">
+  <h2>League Table</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>N.O</th><th>Team</th><th>MP</th><th>W</th><th>D</th><th>L</th><th>Pts</th><th>GD</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Galaxy FC</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>2</td><td>Jamie FC</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="audio-player"><audio controls loop><source src="assets/theme-dls25.mp3" type="audio/mpeg"/></audio></div>
+<script>
+const path=location.pathname.split('/').pop();
+document.querySelectorAll('.nav-links a').forEach(a=>{if(a.getAttribute('href')===path){a.style.color='#7ed957';a.style.fontWeight='700';}});
+</script>
+</body>
+</html>

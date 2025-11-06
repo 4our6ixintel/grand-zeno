@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Matches — DLS25 League</title>
+<style>
+body{
+  margin:0;font-family:Inter,Arial;
+  background:linear-gradient(180deg,rgba(5,5,8,0.7),rgba(0,0,0,0.8)),url('assets/bg2.jpg') center/cover fixed;
+  color:#f6fbff;
+}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:rgba(255,255,255,0.04);backdrop-filter:blur(8px);position:sticky;top:0;z-index:99;border-bottom:1px solid rgba(255,255,255,0.08);}
+.nav-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;}
+.nav-brand img{width:40px;height:40px;border-radius:8px;}
+.nav-links{display:flex;gap:16px;flex-wrap:wrap;}
+.nav-links a{color:#c9d1d6;text-decoration:none;font-weight:600;padding:6px 10px;border-radius:8px;}
+.nav-links a:hover{background:rgba(255,255,255,0.06);color:#fff;}
+.container{max-width:1200px;margin:30px auto;padding:16px;}
+.match-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
+.match{background:rgba(255,255,255,0.03);padding:12px;border-radius:12px;backdrop-filter:blur(6px);}
+.match h3{margin:0 0 6px;}
+.small{font-size:13px;color:#cbd5db;}
+.audio-player{position:fixed;bottom:12px;right:12px;background:rgba(255,255,255,0.07);backdrop-filter:blur(8px);border-radius:14px;padding:8px;}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-brand"><img src="assets/logo.png"/><span>DLS25 League</span></div>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="match.html">Matches</a>
+    <a href="tables.html">Tables</a>
+    <a href="blog.html">Blog</a>
+    <a href="rules.html">Rules</a>
+  </nav>
+</header>
+
+<div class="container">
+  <h2>Season Schedule — 90 Matches</h2>
+  <div id="matches" class="match-list"></div>
+</div>
+
+<div class="audio-player">
+  <audio controls loop>
+    <source src="assets/theme-dls24.mp3" type="audio/mpeg"/>
+  </audio>
+</div>
+
+<script>
+const teams=["Galaxy FC","Jamie FC","Liverpool FC","AFC Gunners FC","Mcdamasen FC","Man City FC","Man U","Pafoda FC","Ten United FC","Talex FC"];
+function roundRobin(list){
+ const n=list.length,rounds=n-1,half=n/2,s=[];
+ const teams=[...list];
+ for(let r=0;r<rounds;r++){
+  const pairs=[];
+  for(let i=0;i<half;i++)pairs.push([teams[i],teams[n-1-i]]);
+  s.push(pairs);
+  teams.splice(1,0,teams.pop());
+ }
+ return s;
+}
+function genSeason(t){
+ const s=roundRobin(t),f=[];
+ const start=new Date();
+ let d=0;
+ s.forEach((r,i)=>r.forEach(p=>{
+   const date=new Date(start);date.setDate(date.getDate()+d++);
+   f.push({home:p[0],away:p[1],round:i+1,date:date.toISOString().slice(0,10)});
+ }));
+ const rev=s.flatMap((r,i)=>r.map(p=>{
+   const date=new Date(start);date.setDate(date.getDate()+d++);
+   return {home:p[1],away:p[0],round:i+1+s.length,date:date.toISOString().slice(0,10)};
+ }));
+ return f.concat(rev);
+}
+const matches=genSeason(teams);
+document.getElementById('matches').innerHTML=matches.map((m,i)=>`
+ <div class="match"><h3>Match ${i+1}: ${m.home} vs ${m.away}</h3><div class="small">Round ${m.round} • ${m.date}</div></div>
+`).join('');
+const path=location.pathname.split('/').pop();
+document.querySelectorAll('.nav-links a').forEach(a=>{if(a.getAttribute('href')===path){a.style.color='#7ed957';a.style.fontWeight='700';}});
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>DLS25 — Ultimate League</title>
+<style>
+:root {
+  --accent: #7ed957;
+  --muted: #c9d1d6;
+  --glass: rgba(255,255,255,0.05);
+  --maxw: 1100px;
+}
+* {box-sizing:border-box;margin:0;padding:0;}
+body {
+  min-height:100vh;
+  font-family: Inter, system-ui, -apple-system, Roboto, "Segoe UI", Arial;
+  color:#eef2f7;
+  background:linear-gradient(180deg,rgba(10,10,12,0.6),rgba(0,0,0,0.75)),url('assets/bg1.jpg') center/cover fixed;
+  -webkit-font-smoothing:antialiased;
+}
+/* Nav */
+.nav {
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 22px;background:rgba(255,255,255,0.04);
+  backdrop-filter:blur(8px);position:sticky;top:0;z-index:999;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.nav-brand {display:flex;align-items:center;gap:10px;font-weight:700;color:#fff;}
+.nav-brand img {width:40px;height:40px;border-radius:8px;object-fit:cover;}
+.nav-links {display:flex;gap:16px;flex-wrap:wrap;}
+.nav-links a {color:var(--muted);text-decoration:none;font-weight:600;padding:6px 10px;border-radius:8px;}
+.nav-links a:hover {background:rgba(255,255,255,0.06);color:#fff;}
+@media(max-width:680px){
+  .nav{flex-direction:column;align-items:flex-start;}
+  .nav-links{width:100%;justify-content:space-around;padding-top:8px;}
+}
+/* Hero */
+.hero {
+  max-width:var(--maxw);margin:40px auto;padding:20px;
+  border-radius:14px;background:var(--glass);backdrop-filter:blur(10px);
+}
+.cards{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px;}
+.card{
+  background:rgba(255,255,255,0.03);
+  padding:14px;border-radius:12px;min-width:160px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.45);
+}
+.footer{text-align:center;color:var(--muted);margin:40px auto;}
+/* Audio Player */
+.audio-player{
+  position:fixed;bottom:12px;right:12px;
+  background:rgba(255,255,255,0.07);
+  backdrop-filter:blur(8px);
+  border-radius:14px;padding:8px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.5);
+}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-brand">
+    <img src="assets/logo.png" alt="DLS25 logo"/>
+    <span>DLS25 League</span>
+  </div>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="match.html">Matches</a>
+    <a href="tables.html">Tables</a>
+    <a href="blog.html">Blog</a>
+    <a href="rules.html">Rules</a>
+  </nav>
+</header>
+
+<main class="hero">
+  <h2>Welcome to DLS25 League</h2>
+  <p>Experience Dream League Soccer-style competition online. Blurred stadium visuals, glassmorphism UI, and a full 90-match season generator.</p>
+  <div class="cards">
+    <div class="card"><strong>Matches</strong><div>Full double round-robin schedule</div></div>
+    <div class="card"><strong>Tables</strong><div>Auto-updated league standings</div></div>
+    <div class="card"><strong>Blog + Chat</strong><div>Share match reports and fan banter</div></div>
+  </div>
+</main>
+
+<footer class="footer">© DLS25 League — Inspired by DLS 2024/25</footer>
+
+<div class="audio-player">
+  <audio controls loop>
+    <source src="assets/theme-dls25.mp3" type="audio/mpeg"/>
+    Your browser does not support audio.
+  </audio>
+</div>
+
+<script>
+const path = location.pathname.split('/').pop();
+document.querySelectorAll('.nav-links a').forEach(a=>{
+  if(a.getAttribute('href')===path){a.style.color='#7ed957';a.style.fontWeight='700';}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Blog & Chat — DLS25</title>
+<style>
+body{margin:0;font-family:Inter,Arial;background:linear-gradient(180deg,rgba(4,4,8,0.7),rgba(0,0,0,0.8)),url('assets/bg1.jpg') center/cover fixed;color:#f4fbff;}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:rgba(255,255,255,0.04);backdrop-filter:blur(8px);position:sticky;top:0;border-bottom:1px solid rgba(255,255,255,0.08);}
+.nav-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;}
+.nav-brand img{width:40px;height:40px;border-radius:8px;}
+.nav-links{display:flex;gap:16px;flex-wrap:wrap;}
+.nav-links a{color:#c9d1d6;text-decoration:none;font-weight:600;padding:6px 10px;border-radius:8px;}
+.nav-links a:hover{background:rgba(255,255,255,0.06);color:#fff;}
+.container{max-width:1100px;margin:20px auto;padding:16px;}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;}
+.panel{background:rgba(255,255,255,0.03);padding:14px;border-radius:12px;backdrop-filter:blur(6px);}
+.article{margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.03);padding-bottom:8px;}
+.input,textarea{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);background:transparent;color:#cbd5db;}
+.btn{padding:8px 12px;border:0;border-radius:10px;background:#7ed957;color:#0a0a0a;font-weight:700;cursor:pointer;}
+.chat-messages{height:360px;overflow:auto;padding:6px;background:rgba(0,0,0,0.2);border-radius:8px;}
+.msg{padding:8px;margin-bottom:8px;border-radius:8px;background:rgba(255,255,255,0.03);}
+.small{font-size:12px;color:#cbd5db;}
+.audio-player{position:fixed;bottom:12px;right:12px;background:rgba(255,255,255,0.07);backdrop-filter:blur(8px);border-radius:14px;padding:8px;}
+@media(max-width:880px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-brand"><img src="assets/logo.png"/><span>DLS25 League</span></div>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="match.html">Matches</a>
+    <a href="tables.html">Tables</a>
+    <a href="blog.html">Blog</a>
+    <a href="rules.html">Rules</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="grid">
+    <section class="panel">
+      <h3>Write a Post</h3>
+      <input id="title" class="input" placeholder="Title"/>
+      <textarea id="content" class="input" rows="6" placeholder="Post content"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input id="author" class="input" placeholder="Author" style="width:160px;"/>
+        <button id="publish" class="btn">Publish</button>
+      </div>
+      <hr style="margin:12px 0;border:0;border-top:1px solid rgba(255,255,255,0.05)"/>
+      <div id="posts"></div>
+    </section>
+    <aside class="panel">
+      <h3>Chatroom</h3>
+      <div id="chat" class="chat-messages"></div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <input id="nick" class="input" placeholder="Nickname" style="width:140px;"/>
+        <input id="msg" class="input" placeholder="Message"/>
+        <button id="send" class="btn">Send</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div class="audio-player"><audio controls loop><source src="assets/theme-dls25.mp3" type="audio/mpeg"/></audio></div>
+
+<script>
+function escapeHtml(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function loadPosts(){
+ const p=JSON.parse(localStorage.getItem('dls_posts')||'[]').reverse();
+ document.getElementById('posts').innerHTML=p.map(x=>`
+  <div class="article"><h4>${escapeHtml(x.title)}</h4>
+  <div class="small">by ${escapeHtml(x.author)} • ${new Date(x.time).toLocaleString()}</div>
+  <p>${escapeHtml(x.content)}</p></div>`).join('');
+}
+document.getElementById('publish').onclick=()=>{
+ const t=title.value.trim(),c=content.value.trim(),a=author.value.trim()||'Anonymous';
+ if(!t||!c)return;
+ const p=JSON.parse(localStorage.getItem('dls_posts')||'[]');p.push({title:t,content:c,author:a,time:Date.now()});
+ localStorage.setItem('dls_posts',JSON.stringify(p));title.value='';content.value='';loadPosts();
+};loadPosts();
+function loadChat(){
+ const m=JSON.parse(localStorage.getItem('dls_chat')||'[]');
+ chat.innerHTML=m.map(x=>`<div class="msg"><b>${escapeHtml(x.nick)}</b> <span class="small">${new Date(x.t).toLocaleTimeString()}</span><div>${escapeHtml(x.text)}</div></div>`).join('');
+ chat.scrollTop=chat.scrollHeight;
+}
+send.onclick=()=>{
+ const n=nick.value.trim()||'Fan',t=msg.value.trim();if(!t)return;
+ const m=JSON.parse(localStorage.getItem('dls_chat')||'[]');m.push({nick:n,text:t,t:Date.now()});
+ localStorage.setItem('dls_chat',JSON.stringify(m.slice(-200)));msg.value='';loadChat();
+};loadChat();
+const path=location.pathname.split('/').pop();
+document.querySelectorAll('.nav-links a').forEach(a=>{if(a.getAttribute('href')===path){a.style.color='#7ed957';a.style.fontWeight='700';}});
+</script>
+</body>
+</html>
